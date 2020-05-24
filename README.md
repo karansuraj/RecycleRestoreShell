@@ -1,6 +1,6 @@
 # Recycle and Restore Shell Scripts
 
-In the terminal of Unix-based systems, there is no 'recycle' command. The scripts in this repo aims to replicate the functionality of the rm command, but instead of deleting files and directories, we will be moving them to a dedicated 'recycle bin' directory. While performing these recycle actions on a file, a record of the original location of the recycled file will be stored in a hidden file in the recycle bin called '.restore.info'. Below is an overview of each script in this repo.
+In the terminal of Unix-based systems, there is no 'recycle' command. The scripts in this repo aim to replicate the functionality of the rm command, but instead of deleting files and directories, we will be moving them to a dedicated 'recycle bin' directory. While performing these recycle actions on a file, a record of the original location of the recycled file will be stored in a hidden file in the recycle bin called '.restore.info'. Below is an overview of each script in this repo.
 
 ## config.sh
 This script is strictly run by the recycle.sh and restore.sh scripts to source common environment variable information and has no use being run directly. The script sets the target directory for the location of the recycle bin on the system, as well as the path to the '.restore.info' file that will contain records of recycled files.
