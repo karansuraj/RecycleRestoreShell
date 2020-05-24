@@ -13,16 +13,16 @@ mkdir -p $recycleDir
 cd ${recycleDir}
 
 
-#  ===================== HANDLE FILE ARGS =====================
+#  ===================== HANDLE ARG ERRORS =====================
 
-# 1. No filename provided: Display error and set error exit status
+# Error, no filename provided
 if [ $# -eq 0 ]; then
   echo "usage: ./restore file"
   exit 1
 fi
 
 
-# 2. File does not exist: Display error message, terminate the script.
+# Error, file does not exist
 if [ ! -f ${fname} ]; then
   echo "restore: ${fname}: No such file"
   exit 1

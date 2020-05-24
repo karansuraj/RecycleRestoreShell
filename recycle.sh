@@ -14,6 +14,7 @@ ropt=false;
 
 # ===================== FUNCTIONS =====================
 
+# Function to prompt users in interactive mode
 ioptPrompt () {
   # Check script option for interactive mode
   if [ $iopt = true ]; then
@@ -27,12 +28,13 @@ ioptPrompt () {
       true
     fi
   else
-    # If not interactive, proceed
+    # If not interactive, proceed without prompting user
     true
   fi
 }
 
-recycleSingleFile () {
+
+recycle () {
   local fname=$1
 
   # File being deleted is not recycle script
@@ -57,7 +59,7 @@ recycleSingleFile () {
       do
         # file string could be '*' if directory is empty, so need to check
         [[ -f "$file"  || -d "$file" ]] || continue
-        recycleSingleFile $file
+        recycle $file
       done
 
       # Move back out of dir & delete dir itself after recursing
@@ -74,7 +76,7 @@ recycleSingleFile () {
 
       # Delete dir if there are no files in it
       rm -r "${fname}"
-      # Echo fname if verbose option turned on
+      # Echo fname with path to it if verbose option turned on
       [[ $vopt = true ]] && echo `pwd`/${fname}
       return 0
     else
@@ -115,7 +117,7 @@ recycleSingleFile () {
   # Move fname to recycleDir renamed to recyclefName
   mv ${fname} ${recycleDir}/${recyclefName}
 
-  # Echo fname if verbose option turned on
+  # Echo fname with path to it if verbose option turned on
   [[ $vopt = true ]] && echo `pwd`/${fname}
 
 }
@@ -123,17 +125,17 @@ recycleSingleFile () {
 
 # ===================== MAIN =====================
 
-# Make recycle directory exists if it doesn't exist
+# Make recycle directory if it doesn't already exist
 mkdir -p $recycleDir
 
-# Make .restore.info in recycleDir (as opposed to $HOME in the project requirements)
+# Make .restore.info file if it doesn't already exist
 if [ ! -f ${restoreInfoPath} ]
 then
   touch ${restoreInfoPath}
 fi
 
 
-# Parse out option arguments from function
+# Parse out option arguments and exit on invalid option
 while getopts ":ivr" opt; do
   case ${opt} in
     i ) iopt=true;
@@ -142,12 +144,15 @@ while getopts ":ivr" opt; do
       ;;
     r ) ropt=true;
       ;;
-    \? ) echo "usage: ./recycle [-i | -v | -r] file"
+    \? ) echo "usage: ./recycle [-i | -v | -r] file";
+         exit 1;
       ;;
   esac
 done
 
+# Shift to next script argument after options
 shift $((OPTIND -1))
+
 # Check that there are actually file arguments and exit if not
 if [ $# -eq 0 ]; then
   echo "usage: ./recycle [-i | -v | -r] file"
@@ -155,9 +160,8 @@ if [ $# -eq 0 ]; then
 fi
 
 
-
 # Loop over remaining script args, attempting recursive recycle
 for fileArg in "$@"
 do
-    recycleSingleFile $fileArg
+    recycle $fileArg
 done
